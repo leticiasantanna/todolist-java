@@ -1,5 +1,6 @@
 package br.com.leticiasantanna.todolist.user.controller;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import br.com.leticiasantanna.todolist.user.entity.UserModel;
 import br.com.leticiasantanna.todolist.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class UserController {
               .body("Usuário já cadastrado!");
     }
 
+    var passwordCrypt = BCrypt.withDefaults().hashToString(12, userModel.getPassword().toCharArray());
+    userModel.setPassword(passwordCrypt);
     var userCreated = userRepository.save(userModel);
 
       return ResponseEntity
