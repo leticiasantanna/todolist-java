@@ -26,4 +26,11 @@ public class TaskModel {
     @CreationTimestamp
     private LocalDateTime createdAt;
     private UUID userId;
+
+    public void setTitle(String title) throws Exception {
+        if(title.length() > 30) {
+            throw new Exception("Quantidade de caracteres excedida no título");
+        }
+        this.title = title;
+    }
 }

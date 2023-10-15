@@ -27,7 +27,7 @@ public class TaskController {
     private TaskRepository taskRepository;
 
     @PostMapping("/create")
- public ResponseEntity createTask(@RequestBody TaskModel taskModel, HttpServletRequest request) {
+    public ResponseEntity createTask(@RequestBody TaskModel taskModel, HttpServletRequest request) {
         var userId = request.getAttribute("userId");
         taskModel.setUserId((UUID) userId);
 
@@ -58,11 +58,22 @@ public class TaskController {
     }
 
     @PutMapping ("/{id}")
-    public TaskModel updateTaskById(@RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id) {
+    public ResponseEntity updateTaskById(@RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id) {
       var task = taskRepository.findById(id).orElse(null);
+      var userId = request.getAttribute("userId");
+
+
+        assert task != null;
+        if(task.getUserId() != (userId)) {
+          return ResponseEntity
+                  .status(HttpStatus.BAD_REQUEST)
+                  .body("Alteração permitida apenas para o dono da tarefa!");
+      }
 
         Utils.copyNonNullProperties(taskModel, task);
 
-        return taskRepository.save(task);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(taskRepository.save(task));
     }
 }
