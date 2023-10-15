@@ -1,11 +1,11 @@
 package br.com.leticiasantanna.todolist.task.controller;
 
-import br.com.leticiasantanna.todolist.task.repository.TaskRepository;
 import br.com.leticiasantanna.todolist.task.entity.TaskModel;
+import br.com.leticiasantanna.todolist.task.repository.TaskRepository;
+import br.com.leticiasantanna.todolist.utils.Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,10 +59,10 @@ public class TaskController {
 
     @PutMapping ("/{id}")
     public TaskModel updateTaskById(@RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id) {
-        var userId = request.getAttribute("userId");
+      var task = taskRepository.findById(id).orElse(null);
 
-        taskModel.setId((UUID) userId);
-        taskModel.setId(id);
-        return taskRepository.save(taskModel);
+        Utils.copyNonNullProperties(taskModel, task);
+
+        return taskRepository.save(task);
     }
 }
